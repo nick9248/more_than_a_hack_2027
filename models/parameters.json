@@ -1,0 +1,19 @@
+{
+  "decoder": {
+    "boundary_strength": 1.5,
+    "dead_switch_cost": 60.0,
+    "duration_frames": 39,
+    "missing_team_temperature": 0.35,
+    "mode": "joint",
+    "short_spell_penalty": 6.0,
+    "team_switch_cost": 1.0
+  },
+  "football_blend": 0.9,
+  "neural_owner_mix": 0.5,
+  "runtime": {
+    "chunk_steps": 2048,
+    "device": "cpu",
+    "threads": 2
+  },
+  "schema_version": 1
+}

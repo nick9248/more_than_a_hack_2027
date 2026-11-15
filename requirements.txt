@@ -1,0 +1,3 @@
+# Standard installation entry point for the selected Persian Lion model.
+# requirements-lock.txt pins inference and official CSV-validation dependencies.
+-r requirements-lock.txt

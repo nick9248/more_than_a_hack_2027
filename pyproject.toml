@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools==84.2.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "persian-lion-possession"
+version = "1.0.0"
+description = "Offline football possession inference from anonymous tactical tracking"
+requires-python = "==3.12.*"
+dependencies = [
+  "joblib==1.6.0",
+  "numba==0.61.2",
+  "numpy==2.2.6",
+  "pandas==2.3.3",
+  "scikit-learn==1.7.2",
+  "scipy==1.17.1",
+  "threadpoolctl==3.7.0",
+  "torch==2.15.0",
+]
+
+[project.scripts]
+persian-lion = "persian_lion.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["persian_lion*"]

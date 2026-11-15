@@ -1,0 +1,86 @@
+# This repository is public. The match data is licensed for the competition only and must never
+# be committed, and neither may anything that reconstructs it (frame-level tracking exports,
+# clipped video).
+
+# -- gated match data ----------------------------------------------------------------------
+# data/ holds only its README. Real data lives outside the repo (see MTAH_DATA_DIR in README.md).
+data/*
+!data/README.md
+*.mp4
+*.mkv
+*.avi
+*.mov
+*_atd.txt
+*_atd.xml
+*_homography.csv
+*_smart_tagging.xml
+
+# -- private ground truth / leaked answers ---------------------------------------------------
+# No competition label files are included in this review branch.
+*_possession_gt.csv
+*_possession_gt_meta.json
+*_possession_gt_reference.csv
+possession_by_frame.pkl
+
+# -- generated output ------------------------------------------------------------------------
+# Submissions are whole-match label files; regenerate them rather than committing them.
+# (The final submission file is attached to the Google Form, not stored here.)
+evaluation/results/*.csv
+evaluation/reports/
+evaluation/scoreboard.csv
+
+# -- models and large artefacts ---------------------------------------------------------------
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.npy
+*.npz
+*.pkl
+*.parquet
+outputs/
+cache/
+
+# -- notebooks ---------------------------------------------------------------------------------
+.ipynb_checkpoints/
+
+# -- editors, environments, caches -----------------------------------------------------------
+.idea/
+.vscode/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+.pytest_cache/
+.DS_Store
+Thumbs.db
+
+# -- Persian Lion inference additions ------------------------------------------------------
+# Keep external data, generated labels and local experiment/agent artifacts out of Git.
+external_data/
+datasets/
+submission/
+artifacts/
+*.csv
+*.xml
+*.zip
+*.manifest.json
+*.joblib
+!models/model.joblib
+!models/temporal.pt
+!models/deadball.joblib
+
+# Preserve the original directory layout with documentation/placeholders only.
+evaluation/gt/*
+!evaluation/gt/README.md
+evaluation/results/*
+!evaluation/results/.gitkeep
+
+# The local Mac environment is a symlink; also ignore it without a trailing slash.
+.venv
+.venv*/
+*.egg-info/
+build/
+dist/
