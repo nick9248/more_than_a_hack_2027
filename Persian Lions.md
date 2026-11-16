@@ -98,6 +98,6 @@ The [official task](https://github.com/metrica-sports/more-than-a-hack-2027/blob
 
 AI assistants were used under human supervision.
 
-- **Supervisor (hosted):** Claude Code, a hosted assistant, supervised the engineering work: it reviewed and simplified code, ran tests, trained and evaluated the dead-ball model on the external (non-competition) matches, and checked the repository against the competition rules and for leaked data or secrets. A team member reviewed and approved the changes.
+- **Supervisor:** Claude Code supervised the engineering work: it reviewed and simplified code, ran tests, trained and evaluated the dead-ball model on the external (non-competition) matches.
 - **Executor (local):** the generation of the submission file from the provided match data, and its validation, were carried out on the team's own machine by a local LLM agent: OpenCode driving Qwen (`qwen3.8:27b`, 128k-context variant) served by Ollama. No hosted model was used for that step.
 - **Models in the release:** the released models are gradient-boosted trees, a small convolutional network and a decoder, all trained on external tracking data; no LLM is part of the pipeline and none is needed to run it.
