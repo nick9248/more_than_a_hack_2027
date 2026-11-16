@@ -12,7 +12,7 @@ models/                      trees, temporal network, dead-ball model, parameter
 starter/predict_possession.py   run the model (organisers' starter scripts are kept beside it)
 evaluation/                  the organisers' scorer and validator (no labels included)
 external/                    scripts that trained the dead-ball model and chose its blend weight
-Persian Lions.md             technical document
+Persian Lions.md             technical document (Persian Lions.pdf is the same text as a PDF)
 TESTING_REFERENCE.md         testing and provenance record
 THIRD_PARTY_NOTICES.md       licences and attribution of the external training data
 requirements*.txt, pyproject.toml   pinned dependencies
