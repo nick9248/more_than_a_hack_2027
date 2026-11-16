@@ -226,14 +226,14 @@ The official metric and output requirements are defined in the read-only [compet
 
 ## Football dead-ball model (added to version 1)
 
-`models/deadball.joblib` is a histogram gradient-boosting classifier of live versus dead (D), 300 iterations, learning rate 0.06, 31 leaves, seed 20261113. Its 205 inputs are described in `persian_lion/football.py` (schema `touchline_temporal_v2`): player geometry, the ball position when seen, and about 10 s of context. Target: the provider's `BallStatus`. Fit matches: J03WMX, J03WN1, J03WOH, J03WOY (every 5th frame inside the halves; each match three times: as tracked, with the ball hidden in random stretches, and with corrupted players plus hidden-ball stretches; 340,374 rows). Held out: J03WPY, J03WQQ, J03WR9. Source licence, revision and attribution are the IDSSE entries above. No competition data is used for fitting. The corruption settings in `external/augment.py` resemble aggregate, unlabelled statistics of the provided tracking (disclosed in the technical document).
+`models/deadball.joblib` is a histogram gradient-boosting classifier of live versus dead (D), 300 iterations, learning rate 0.06, 31 leaves, seed 20261113. Its 205 inputs are described in `persian_lion/football.py` (schema `touchline_temporal_v2`): player geometry, the ball position when seen, and about 10 s of context. Target: the provider's `BallStatus`. Fit matches: J03WMX, J03WN1, J03WOH, J03WOY (every 5th frame inside the halves; each match three times: as tracked, and degraded at the "moderate" and "severe" levels of `external/augment.py`; 340,374 rows). Held out: J03WPY, J03WQQ, J03WR9. Source licence, revision and attribution are the IDSSE entries above. No competition data is used for fitting. The two degradation levels are fixed, generic, round-number settings (players vanishing, stray tracks, noise, ball hidden in random stretches, about 33% and 57% of the ball hidden); nothing from the provided game is used.
 
-| Held-out evaluation | Earlier dead-ball model (88 player-only features) | This model (205 features) |
-|---|---|---|
-| Dead-ball F1, corrupted players + hidden ball, three matches | 0.902 to 0.926 | 0.956 to 0.971 |
-| Dead-ball F1, clean | 0.911 to 0.935 | 0.998 to 0.999 |
-| False D on live frames, corrupted + hidden ball | 4.6% to 5.0% | 2.3% to 2.5% |
-| Mean spellF1 through the decoder, corrupted players + realistic ball gaps (best weight) | 0.628 (weight 0.65) | 0.650 (weight 0.9) |
-| Mean spellF1, clean players + realistic ball gaps | 0.674 (weight 0.5) | 0.683 (weight 0.9) |
+| Held-out evaluation (three matches) | Clean | Moderate degradation | Severe degradation |
+|---|---|---|---|
+| Dead-ball F1 | 0.998 to 0.999 | 0.968 to 0.983 | 0.949 to 0.964 |
+| False D on live frames | 0.1% to 0.2% | 1.5% to 2.3% | 2.5% to 2.7% |
+| Mean spellF1 through the decoder, trees alone (weight 0) | not run | 0.619 | 0.464 |
+| Mean spellF1, blend weight 0.9 | not run | 0.636 | 0.550 |
+| Mean alive/dead F1, weight 0 then 0.9 | not run | 0.971 then 0.981 | 0.872 then 0.969 |
 
-The blend weight 0.9 was picked with `external/sweep_blend_weight.py` on the held-out matches (weights 0.9 and 1.0 differ by 0.001 spellF1). Clean-ball results near 1.0 mostly reflect the ball being visible: a first model trained without hidden-ball stretches scored 0.999 yet was worse than the earlier model once the ball was hidden, which is why the hidden-ball stretches are part of training. Caveats: the corruption generators are the same family in training and evaluation, the three held-out matches are a small sample, all are development-exposed, and the provider's `BallStatus` is not the competition's definition of stopped play.
+The blend weight 0.9 was picked with `external/sweep_blend_weight.py` on the held-out matches; weights 0.65 to 1.0 differ by at most 0.003 spellF1 at moderate degradation and 0.011 at severe. Clean-ball scores near 1.0 mostly reflect the ball being visible: a model trained without hidden-ball stretches scored 0.999 on clean data yet did worse than the trees once the ball was hidden, which is why the degraded views are part of training. Caveats: the degradation generators are the same family in training and evaluation, the three held-out matches are a small sample, all are development-exposed, and the provider's `BallStatus` is not the competition's definition of stopped play.

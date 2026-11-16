@@ -2,8 +2,8 @@
 
     python external/sweep_blend_weight.py
 
-For each held-out external match, two conditions: corrupted players + realistic ball gaps ("tracker-like")
-and clean players + realistic ball gaps. For every weight the blended live probability goes through the
+For each held-out external match, two conditions: the "moderate" and the "severe" degradation of augment.py
+(players corrupted, ball hidden in random stretches). For every weight the blended live probability goes through the
 release decoder and the official scorer. The tree/network outputs are cached in MTAH_EXTERNAL_DIR/cache.
 """
 import numpy as np
@@ -11,7 +11,7 @@ import joblib
 from scipy.special import expit, logit
 
 from common import EXTERNAL_DIR, ROOT, VAL, load_match
-from augment import corrupt, realistic_gaps
+from augment import LEVELS, degraded
 import persian_lion.predict as P
 from persian_lion import boundary, football
 from persian_lion.decode import decode
@@ -51,16 +51,15 @@ def logit_clipped(p):
 
 
 if __name__ == "__main__":
-    release = P.load_release(ROOT)
+    release = P.load_release(ROOT, require_frozen=False)   # the manifest is rebuilt after the weight is chosen
     decoder = release["parameters"]["decoder"]
     artifact = joblib.load(ROOT / "models/deadball.joblib")
     results = {}
     for mid in VAL:
         base = load_match(mid)
-        seed = sum(map(ord, mid))
-        with_gaps = realistic_gaps(base, seed + 7)
-        for condition, match in (("tracker-like", corrupt(with_gaps, seed)), ("clean players", with_gaps)):
-            cache = CACHE / f"{mid}_{condition.split()[0]}.npz"
+        for condition in LEVELS:
+            match = degraded(base, sum(map(ord, mid)), condition)
+            cache = CACHE / f"{mid}_{condition}.npz"
             if cache.exists():
                 z = np.load(cache)
                 live, home, bp = z["live"], z["home"], z["bp"]
@@ -75,8 +74,8 @@ if __name__ == "__main__":
                 results.setdefault((condition, w), []).append(
                     score(match, decode(blended, home, seen, match.period, bp, **decoder)))
             print("done", mid, condition, flush=True)
-    for condition in ("tracker-like", "clean players"):
-        print(condition, "+ realistic ball gaps; mean over held-out matches")
+    for condition in LEVELS:
+        print(condition, "degradation; mean over held-out matches")
         for w in WEIGHTS:
             spell, macro, alive_dead = np.mean(results[(condition, w)], axis=0)
             print("  football weight {:.2f}: spellF1 {:.3f}  macroF1 {:.3f}  alive/dead F1 {:.3f}".format(w, spell, macro, alive_dead))
